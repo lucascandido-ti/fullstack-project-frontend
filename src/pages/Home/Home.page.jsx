@@ -19,6 +19,7 @@ export function HomePage(props) {
     const [dataSeries, setDataSerie] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [empty, setEmpty] = useState(false);
 
     useEffect(() => {
         getSeries();
@@ -26,12 +27,19 @@ export function HomePage(props) {
 
     const getSeries = async () => {
         try {
+            setSeries([]);
+            setDataSerie([]);
             const response = await TimeSeries.get();
             var data = response.data;
 
-            setSeries(data);
-            getDataGrid(data[0]);
-            
+            if(data.length > 0){
+                setSeries(data);
+                getDataGrid(data[0]);
+                setEmpty(false);
+            }else{
+                setEmpty(true);
+            }
+
 
         } catch (error) {
             console.log(error)
@@ -41,7 +49,7 @@ export function HomePage(props) {
     const getDataGrid = async (serie) => {
         try {
             setSelectSerie(serie);
-            const response = await TimeSeries.get(serie.fileId);
+            const response = await TimeSeries.get(serie.fileid);
             var data = response.data;
 
             setDataSerie(data.data_series.map(item => {
@@ -108,7 +116,7 @@ export function HomePage(props) {
 
     const deleteSerie = async (item) =>{
         try {
-            const response = await TimeSeries.delete(item.fileId);
+            const response = await TimeSeries.delete(item.fileid);
             var data = response.data;
             getSeries();
         } catch (error) {
@@ -134,7 +142,7 @@ export function HomePage(props) {
                                 {attribuites_file != null && `1 Arquivo selecionado: ${attribuites_file.name}`}
                             </p>
                         </Text>
-                        <input id="file-to-upload" hidden accept="image/*" multiple type="file" onChange={(e)=>handleChangeInputFile(e)}/>
+                        <input id="file-to-upload" hidden accept="text/csv" multiple type="file" onChange={(e)=>handleChangeInputFile(e)}/>
                     </InputFile>
                     <Button variant="contained" color="secondary" disabled={loading} onClick={()=>submit()}>
                         {loading && <CircularProgress size={14} />}
@@ -143,7 +151,10 @@ export function HomePage(props) {
                     
                 </BoxRegister>
                 <BoxGrid>
-                    <h1>Series de Dados</h1>
+                    
+                    {empty && <h1>Importe uma nova série de dados</h1>}
+                    {!empty && <h1>Series de Dados</h1>}
+
                     <CardGrid>
                         <Box style={{width:'865px', height:'200px'}}>
                             <CarouselProvider naturalSlideWidth={100} isIntrinsicHeight={'230px'} naturalSlideHeight={'230px'} totalSlides={((series.length)/3)} infinite={true}>
@@ -179,12 +190,16 @@ export function HomePage(props) {
                 </BoxGrid>
             </BoxFlex>
             <BoxChart>
-                <HighChartWrapper
-                    series={dataSeries}
-                    categories={categories}
-                    clickPoint={()=>setPointFocus}
-                    title={selectSerie.name}
-                />
+                {!empty ?
+                    <HighChartWrapper
+                        series={dataSeries}
+                        categories={categories}
+                        clickPoint={()=>setPointFocus}
+                        title={selectSerie.name}
+                    />
+                    :
+                    <></>
+                }
             </BoxChart>
             
             
