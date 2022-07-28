@@ -11,7 +11,7 @@ import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-re
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
 export function HomePage(props) {
-
+    // 👎 O estado está bastante fragmentado e não necessariamente muito coeso
     const [name, setName] = useState('');
     const [attribuites_file, setFile] = useState(null);
     const [series, setSeries] = useState([]);
@@ -25,6 +25,7 @@ export function HomePage(props) {
         getSeries();
     }, [])
 
+    // 👎 Poderia ter usado paginação para trazer os metadados das séries de dados
     const getSeries = async () => {
         try {
             setSeries([]);
@@ -46,6 +47,7 @@ export function HomePage(props) {
         }
     }
 
+    // 👎 Poderia fazer o cache de séries já conhecidas, usando um state, ou mesmo algum store
     const getDataGrid = async (serie) => {
         try {
             setSelectSerie(serie);
@@ -77,6 +79,7 @@ export function HomePage(props) {
     const submit = async () =>{
         setLoading(true);
 
+        // 👎 Poderia ter utilizado alguma biblioteca de validação, ao invés de alerts (e.g. formik, react-hook-form)
         if(ifnull(name,'') == ''){
             alert('Por favor, preencher o nome do arquivo.');
             setLoading(false);
@@ -126,6 +129,7 @@ export function HomePage(props) {
 
 
     return (
+        // 👎 Poderia ter separado um pouco melhor os componentes da `HomePage`
         <Container>
             <TitlePage>
                 <h1>Desafio Full Stack</h1>
@@ -142,6 +146,7 @@ export function HomePage(props) {
                                 {attribuites_file != null && `1 Arquivo selecionado: ${attribuites_file.name}`}
                             </p>
                         </Text>
+                        {/* 👍 Boa sacada do input oculto */}
                         <input id="file-to-upload" hidden accept="text/csv" multiple type="file" onChange={(e)=>handleChangeInputFile(e)}/>
                     </InputFile>
                     <Button variant="contained" color="secondary" disabled={loading} onClick={()=>submit()}>
@@ -157,6 +162,7 @@ export function HomePage(props) {
 
                     <CardGrid>
                         <Box style={{width:'865px', height:'200px'}}>
+                            {/* 👍 Animou a lista de séries de dados */}
                             <CarouselProvider naturalSlideWidth={100} isIntrinsicHeight={'230px'} naturalSlideHeight={'230px'} totalSlides={((series.length)/3)} infinite={true}>
                                 <Slider>
                                     <Slide index={0}>
@@ -194,6 +200,8 @@ export function HomePage(props) {
                     <HighChartWrapper
                         series={dataSeries}
                         categories={categories}
+                        // 👎 Esta sintaxe está incorreta, e por isso o alert não funciona ao clicar em um ponto
+                        // Deveria ser apenas `clickPoint={setPointFocus}` - este é o tipo de erro que o Typescript pegaria
                         clickPoint={()=>setPointFocus}
                         title={selectSerie.name}
                     />

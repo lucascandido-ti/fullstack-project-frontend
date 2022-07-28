@@ -30,8 +30,11 @@ export const Chart = (props) => {
             fitToPlot:true,
             viewDistance:25,
         },
+        // 👎 Esta cor se repete em outro lugar do código (`Card.component.jsx`)
+        // Isto poderia ter sido evitado usando a API de theming / styling da MUI
         colors:["#C485CF"],
         xAxis: {
+            // Uma sintaxe legal para "nullish coalescing" é `props.categories ?? []`
             categories: props.categories !== undefined ? props.categories : [],
         },
         series: [{

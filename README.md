@@ -11,6 +11,9 @@ Toda as configurações necessárias estão nos arquivos Dockerfile e docker-com
 docker-compose up -d
 ```
 
+> 👎 Acho que faltou commitar o `package-lock.json`
+> 👎 Também poderia ter usado Typescript, ESLint e Prettier no projeto
+
 ## Tecnologias
 
 Neste projeto utilizamos ReactJS para construção de toda nossa aplicação,
