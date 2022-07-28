@@ -13,6 +13,7 @@ export function CardGrid(props) {
     );
 }
 
+// 👍 Bom uso da componentização aqui
 export function CardItem(props) {
     return (
         <CardIndexItem onClick={()=>props.clickFunction()}>
